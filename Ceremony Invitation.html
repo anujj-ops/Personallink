@@ -1421,7 +1421,15 @@ function WeddingInvitation() {
   // Any real scroll/keypress hands control back to the guest.
   useEffect(() => {
     if (!slideOn) return;
-    const stops = Array.from(document.querySelectorAll(".opening, #family, #story, .countdown-sec, .event, .events-foot, #rsvp, #location, #eco, #finale"));
+    // Each stop carries its own vertical alignment. The story is taller than the
+    // viewport, so after landing on its top we add a second stop that pulls the
+    // final "Forever" beat fully into view (block:"end") — this way auto-play
+    // walks the whole arc (The First Hello → Forever), not just the first beats.
+    const plan = [[".opening", "start"], ["#family", "start"], ["#story", "start"], [".beats .beat:last-child", "end"], [".countdown-sec", "start"], [".event", "start"], [".events-foot", "start"], ["#rsvp", "start"], ["#location", "start"], ["#eco", "start"], ["#finale", "start"]];
+    const stops = plan.flatMap(([sel, block]) => Array.from(document.querySelectorAll(sel)).map(el => ({
+      el,
+      block
+    })));
     if (!stops.length) {
       setSlideOn(false);
       return;
@@ -1432,9 +1440,9 @@ function WeddingInvitation() {
         setSlideOn(false);
         return;
       }
-      stops[i].scrollIntoView({
+      stops[i].el.scrollIntoView({
         behavior: reduced ? "auto" : "smooth",
-        block: "start"
+        block: stops[i].block
       });
       i += 1;
     };
