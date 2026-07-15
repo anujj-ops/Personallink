@@ -8,7 +8,7 @@
   <meta property="og:title" content="Anuj & Shreya — Mountain Vows" />
   <meta property="og:description" content="High School Sweethearts. Now, Forever. Sheetal Farm, Tansen, Palpa, Nepal · 24–25 November 2026." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://anujj-ops.github.io/Personallink/" />
+  <meta property="og:url" content="https://anujj-ops.github.io/Personallink/Ceremony%20Invitation.html" />
   <meta property="og:image" content="https://anujj-ops.github.io/Personallink/share-preview.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -362,9 +362,9 @@ const {
 
 /* ============================ CONFIG (edit here) ========================== */
 
-// The final Google Maps link has NOT been provided. Paste it here when ready.
-// Example: "https://maps.app.goo.gl/xxxxxxxx"
-const MAPS_URL = "https://share.google/CbHfUaBbekR2uGhLO";
+// Google Maps link for the venue (Sheetal Farm) — permanent, coordinate-based
+// "Get directions" link that works on any device. Replace if the venue changes.
+const MAPS_URL = "https://www.google.com/maps/dir/?api=1&destination=27.87074240258581,83.56550869999998";
 
 // Owner-supplied, legally provided local audio file. No autoplay, no scraping.
 // Relative path (no leading slash) so it works on GitHub Pages project sub-paths
@@ -1644,11 +1644,12 @@ const CSS = `
 @keyframes glowPulse{
   0%,100%{text-shadow:0 0 14px rgba(206,178,116,.34), 0 0 32px rgba(206,178,116,.16);}
   50%{text-shadow:0 0 24px rgba(214,186,124,.62), 0 0 56px rgba(206,178,116,.34);}}
-.title-rise{display:flex;flex-direction:column;align-items:center;}
+.title-rise{display:flex;flex-direction:column;align-items:center;gap:.22em;}
 .mr{display:block;overflow:hidden;padding:.18em .08em;margin:-.14em 0;}
 .mr>span{display:block;transform:translateY(120%);opacity:0;
   animation:rise 1.15s cubic-bezier(.16,.72,.24,1) forwards;}
-.opening-content .display-lg{color:var(--ivory);margin-bottom:.7rem;font-weight:400;}
+.opening-content .display-lg{color:var(--ivory);margin-bottom:1rem;font-weight:400;
+  letter-spacing:.16em;line-height:1.32;font-size:clamp(1.35rem,4.4vw,2.55rem);}
 .opening-content .sub{font-size:.95rem;letter-spacing:.04em;color:#d7ddd2;margin-bottom:1.6rem;}
 .meta{letter-spacing:.34em;font-size:.78rem;color:#e6e2d5;text-transform:uppercase;font-weight:600;}
 .meta-place{letter-spacing:.34em;font-size:.68rem;color:var(--gold);text-transform:uppercase;margin-top:.35rem;}
