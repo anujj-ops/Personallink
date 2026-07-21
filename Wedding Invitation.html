@@ -1417,50 +1417,75 @@ function WeddingInvitation() {
     return () => clearInterval(id);
   }, []);
 
-  // Auto-play: gently advance through each section on a timer, like a slideshow.
-  // Any real scroll/keypress hands control back to the guest.
+  // Auto-play: glide continuously down the page like a video playhead — a slow,
+  // constant scroll from the very top to the end, with each section revealing
+  // itself as it drifts into view. Not slide-to-slide jumps. Any real
+  // scroll/touch/keypress hands control straight back to the guest.
   useEffect(() => {
     if (!slideOn) return;
-    // Each stop carries its own vertical alignment. The story is taller than the
-    // viewport, so after landing on its top we add a second stop that pulls the
-    // final "Forever" beat fully into view (block:"end") — this way auto-play
-    // walks the whole arc (The First Hello → Forever), not just the first beats.
-    const plan = [[".opening", "start"], ["#family", "start"], ["#story", "start"], [".beats .beat:last-child", "end"], [".countdown-sec", "start"], [".event", "start"], [".events-foot", "start"], ["#rsvp", "start"], ["#location", "start"], ["#eco", "start"], ["#finale", "start"]];
-    const stops = plan.flatMap(([sel, block]) => Array.from(document.querySelectorAll(sel)).map(el => ({
-      el,
-      block
-    })));
-    if (!stops.length) {
-      setSlideOn(false);
-      return;
+    const stop = () => setSlideOn(false);
+    window.addEventListener("wheel", stop, {
+      passive: true
+    });
+    window.addEventListener("touchmove", stop, {
+      passive: true
+    });
+    window.addEventListener("keydown", stop);
+
+    // Reduced-motion: honor the setting — step instantly through the sections
+    // instead of a continuous glide.
+    if (reduced) {
+      const stops = Array.from(document.querySelectorAll(".opening, #family, #story, .beats .beat:last-child, .countdown-sec, .event, .events-foot, #rsvp, #location, #eco, #finale"));
+      let i = 0;
+      const go = () => {
+        if (i >= stops.length) {
+          setSlideOn(false);
+          return;
+        }
+        stops[i].scrollIntoView({
+          behavior: "auto",
+          block: "start"
+        });
+        i += 1;
+      };
+      go();
+      const id = setInterval(go, 3800);
+      return () => {
+        clearInterval(id);
+        window.removeEventListener("wheel", stop);
+        window.removeEventListener("touchmove", stop);
+        window.removeEventListener("keydown", stop);
+      };
     }
-    let i = 0;
-    const go = () => {
-      if (i >= stops.length) {
+
+    // Start from the top so the whole story plays from the beginning, then move
+    // the playhead linearly. Runtime scales with page length (~85px/sec) but is
+    // clamped to 45–110s so the pace feels right on any screen.
+    window.scrollTo({
+      top: 0,
+      behavior: "auto"
+    });
+    const span = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const DURATION = Math.min(110000, Math.max(45000, span / 0.085));
+    let raf = 0;
+    let startT = 0;
+    const step = t => {
+      if (!startT) startT = t;
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      const p = Math.min(1, (t - startT) / DURATION);
+      window.scrollTo(0, Math.round(maxY * p));
+      if (p >= 1) {
         setSlideOn(false);
         return;
       }
-      stops[i].el.scrollIntoView({
-        behavior: reduced ? "auto" : "smooth",
-        block: stops[i].block
-      });
-      i += 1;
+      raf = requestAnimationFrame(step);
     };
-    go();
-    const id = setInterval(go, 6200);
-    const pause = () => setSlideOn(false);
-    window.addEventListener("wheel", pause, {
-      passive: true
-    });
-    window.addEventListener("touchmove", pause, {
-      passive: true
-    });
-    window.addEventListener("keydown", pause);
+    raf = requestAnimationFrame(step);
     return () => {
-      clearInterval(id);
-      window.removeEventListener("wheel", pause);
-      window.removeEventListener("touchmove", pause);
-      window.removeEventListener("keydown", pause);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchmove", stop);
+      window.removeEventListener("keydown", stop);
     };
   }, [slideOn, reduced]);
   const rootRef = useRef(null);
