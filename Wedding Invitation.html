@@ -1441,19 +1441,22 @@ function CinemaReel({
     }, "A love that began in youth, growing quietly certain — and finding its forever among the mountains of Nepal."))
   }, {
     k: "story",
-    body: () => h("p", {
-      className: "reel-script reel-poem"
-    }, "Before the mountains held our vows,", h("br"), "they were only a dream we shared —", h("br"), "two hearts, one quiet certainty.")
-  }, ...MILESTONES.map(m => ({
-    k: m.title,
+    ms: 8200,
     body: () => h(React.Fragment, null, h("p", {
       className: "reel-eyebrow"
-    }, "Our Story"), h("h2", {
-      className: "reel-title"
+    }, "Our Story"), h("p", {
+      className: "reel-story-intro reel-script reel-poem"
+    }, "Before the mountains held our vows, they were only a dream we shared."), h("div", {
+      className: "reel-beats"
+    }, MILESTONES.map(m => h("div", {
+      key: m.title,
+      className: "reel-beat"
+    }, h("h3", {
+      className: "reel-beat-title"
     }, m.title), h("p", {
-      className: "reel-line"
-    }, m.body))
-  })), ...list.map(e => ({
+      className: "reel-beat-body"
+    }, m.body)))))
+  }, ...list.map(e => ({
     k: e.id,
     body: () => h(React.Fragment, null, h("p", {
       className: "reel-eyebrow"
@@ -1497,7 +1500,7 @@ function CinemaReel({
       return;
     }
     if (paused) return;
-    const id = setTimeout(() => setIdx(i => i + 1), SCENE_MS);
+    const id = setTimeout(() => setIdx(i => i + 1), scenes[idx].ms || SCENE_MS);
     return () => clearTimeout(id);
   }, [idx, paused, scenes.length, onClose]);
 
@@ -1535,7 +1538,7 @@ function CinemaReel({
   }, h("i", {
     className: "reel-seg-fill",
     style: {
-      animationDuration: `${SCENE_MS}ms`
+      animationDuration: `${scenes[i].ms || SCENE_MS}ms`
     }
   })))), h("button", {
     className: "reel-close",
@@ -2085,6 +2088,12 @@ const CSS = `
 .reel-time{font-family:'Cormorant Garamond',serif;font-style:italic;color:#e7cea0;
   font-size:clamp(1.1rem,4vw,1.6rem);margin-top:.15em;}
 .reel-see{font-family:'Great Vibes',cursive;font-size:clamp(1.5rem,5.5vw,2.5rem);color:#e7cea0;margin-top:1em;}
+.reel-story-intro{font-size:clamp(1.15rem,4.4vw,1.8rem);line-height:1.4;margin-bottom:1.1em;}
+.reel-beats{display:flex;flex-direction:column;gap:.62em;text-align:center;}
+.reel-beat-title{font-family:'Cinzel',serif;text-transform:uppercase;letter-spacing:.12em;
+  font-size:clamp(.8rem,2.7vw,1.02rem);color:#e7cea0;margin-bottom:.1em;}
+.reel-beat-body{font-family:'Cormorant Garamond',serif;font-size:clamp(1rem,3.3vw,1.32rem);
+  line-height:1.32;color:#ece7da;}
 
 .reel-progress{position:absolute;top:0;left:0;right:0;display:flex;gap:4px;padding:12px 14px;z-index:5;}
 .reel-seg{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden;}
